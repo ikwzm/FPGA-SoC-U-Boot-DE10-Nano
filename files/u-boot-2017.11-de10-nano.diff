@@ -1,0 +1,54 @@
+diff --git include/configs/socfpga_common.h include/configs/socfpga_common.h
+index 8a7debb..8933ae2 100644
+--- include/configs/socfpga_common.h
++++ include/configs/socfpga_common.h
+@@ -67,6 +67,8 @@
+ 
+ #define CONFIG_CMD_PXE
+ #define CONFIG_MENU
++#define CONFIG_MENU_SHOW
++#define CONFIG_CMD_BOOTMENU
+ 
+ /*
+  * Cache
+@@ -325,6 +327,20 @@ unsigned int cm_get_qspi_controller_clk_hz(void);
+ 	BOOT_TARGET_DEVICES_PXE(func) \
+ 	func(DHCP, dhcp, na)
+ 
++
++#define CONFIG_PREBOOT \
++	"if run loadbootenv; then " \
++		"echo Loaded environment from ${bootenv};" \
++		"run importbootenv;" \
++	"fi;"
++
++#define CONFIG_BOOTCOMMAND           \
++        "if test -n $uenvcmd; then " \
++		"echo Running uenvcmd ...;" \
++		"run uenvcmd;" \
++	"fi;" \
++        "run distro_bootcmd"
++
+ #include <config_distro_bootcmd.h>
+ 
+ #ifndef CONFIG_EXTRA_ENV_SETTINGS
+@@ -332,10 +348,19 @@ unsigned int cm_get_qspi_controller_clk_hz(void);
+ 	"fdtfile=" CONFIG_DEFAULT_FDT_FILE "\0" \
+ 	"bootm_size=0xa000000\0" \
+ 	"kernel_addr_r="__stringify(CONFIG_SYS_LOAD_ADDR)"\0" \
++	"fpgadata=0x02000000\0" \
++	"fdt_addr=0x02000000\0" \
+ 	"fdt_addr_r=0x02000000\0" \
+ 	"scriptaddr=0x02100000\0" \
+ 	"pxefile_addr_r=0x02200000\0" \
+ 	"ramdisk_addr_r=0x02300000\0" \
++	"bootenv=uEnv.txt\0" \
++        "config_name=" CONFIG_SYS_CONFIG_NAME "\0" \
++	"loadbootenv=if mmc dev 0; then \
++             load mmc 0 ${loadaddr} ${bootenv};" \
++        "fi;\0" \
++	"importbootenv=echo Importing environment from mmc ...;" \
++		"env import -t ${loadaddr} ${filesize}\0" \
+ 	BOOTENV
+ 
+ #endif
