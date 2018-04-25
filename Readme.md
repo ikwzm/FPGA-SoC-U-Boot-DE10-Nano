@@ -16,6 +16,24 @@ This Repository provides a U-Boot Image for DE10-Nano.
   + Customized boot by boot.scr
   + Enable bootmenu
 
+Install U-boot to SD-Card
+------------------------------------------------------------------------------------
+
+### Format SD-Card
+
+https://github.com/ikwzm/FPGA-SoC-Linux/blob/master/doc/install/format-disk-de0-nano-soc.md
+
+### Write to SD-Card
+
+Write u-boot-spl.sfp and u-boot.img to the partition of the youngest sector number of SD-Card.
+
+For example, when formatting SD-Card as shown in the previous section, U-Boot writes to partition-3 of SD-Card as follows.
+
+```console
+shell$ dd if=u-boot-spl.sfp of=/dev/sdc3 bs=64k seek=0
+shell$ dd if=u-boot.img     of=/dev/sdc3 bs=64k seek=4
+```
+
 Build U-boot for DE10-Nano
 ------------------------------------------------------------------------------------
 
